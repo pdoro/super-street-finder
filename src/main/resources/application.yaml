@@ -1,0 +1,6 @@
+
+application:
+  modelFile: streets.model
+  coreNLPProperties: ./corenlp.properties
+  rawDatasetFile: callejero.xlsx
+  trainFile: ./train.data

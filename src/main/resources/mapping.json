@@ -1,0 +1,39 @@
+{
+  "properties": {
+    "_class": {
+      "type": "text"
+    },
+    "country": {
+      "type": "text",
+      "analyzer": "ngram_analyzer",
+      "search_analyzer": "ngram_analyzer"
+    },
+    "id": {
+      "type": "text",
+      "fields": {
+        "keyword": {
+          "type": "keyword"
+        }
+      }
+    },
+    "postal_code": {
+      "type": "long"
+    },
+    "street_name": {
+      "type": "text",
+      "analyzer": "ngram_analyzer",
+      "search_analyzer": "ngram_analyzer"
+    },
+    "street_name_nexus": {
+      "type": "text"
+    },
+    "street_number": {
+      "type": "long"
+    },
+    "street_type": {
+      "type": "text",
+      "analyzer": "ngram_analyzer",
+      "search_analyzer": "ngram_analyzer"
+    }
+  }
+}
