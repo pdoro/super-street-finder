@@ -12,11 +12,7 @@ import org.springframework.data.elasticsearch.core.ElasticsearchOperations
 import org.springframework.data.elasticsearch.core.document.Document
 import org.springframework.data.elasticsearch.core.mapping.IndexCoordinates
 import org.springframework.data.elasticsearch.core.query.IndexQueryBuilder
-import org.springframework.data.elasticsearch.core.query.Query
 import org.springframework.stereotype.Component
-import java.io.BufferedInputStream
-import java.io.File
-import java.io.FileInputStream
 import java.nio.file.Files
 import java.security.SecureRandom
 import kotlin.system.measureTimeMillis
@@ -27,7 +23,7 @@ class StartupRunner(
     private val nerTrainer: NERTrainer,
     private val elasticsearchOperations: ElasticsearchOperations
 ) {
-    val log = logger(Application::class.java)
+    val log = logger(javaClass)
     val index = IndexCoordinates.of("streets")
     val rnd = SecureRandom()
 

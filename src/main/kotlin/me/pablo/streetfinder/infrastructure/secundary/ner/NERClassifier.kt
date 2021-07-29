@@ -12,7 +12,8 @@ import probability
 import java.nio.file.Files
 import java.time.Duration
 import java.time.Instant
-import java.util.zip.ZipInputStream
+import kotlin.time.ExperimentalTime
+import kotlin.time.measureTimedValue
 
 @Service
 class NERClassifier(
@@ -24,13 +25,12 @@ class NERClassifier(
     }
     private val log = logger(javaClass)
 
+    @OptIn(ExperimentalTime::class)
     override fun classify(input: String): ClassifiedInput {
 
-        val start = Instant.now()
-        val classification = crfClassifier.classify(input)
-        val stop = Instant.now()
+        val (classification, duration) = measureTimedValue { crfClassifier.classify(input) }
 
-        log.info("Classify time: ${Duration.between(start, stop).toMillis()} ms")
+        log.info("Classification time: ${duration.inMilliseconds} ms")
 
         classification.flatten()
             .forEach {

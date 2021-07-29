@@ -2,6 +2,7 @@ package me.pablo.streetfinder.infrastructure.secundary.search
 
 import logger
 import me.pablo.streetfinder.domain.core.ClassifiedInput
+import me.pablo.streetfinder.domain.core.SearchHit
 import me.pablo.streetfinder.domain.core.Street
 import me.pablo.streetfinder.domain.core.StreetField
 import me.pablo.streetfinder.domain.port.secondary.Searcher
@@ -14,6 +15,8 @@ import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilde
 import org.springframework.stereotype.Service
 import java.time.Duration
 import java.time.Instant
+import kotlin.time.ExperimentalTime
+import kotlin.time.measureTimedValue
 
 @Service
 class ElasticClient(
@@ -23,19 +26,20 @@ class ElasticClient(
     private val log = logger(javaClass)
     private val STREET_INDEX = IndexCoordinates.of("streets")
 
-    override fun search(input: ClassifiedInput): Pair<Street,Float> {
+    @OptIn(ExperimentalTime::class)
+    override fun search(input: ClassifiedInput): SearchHit {
 
         val searchQuery = buildQueryFrom(input)
 
-        val start = Instant.now()
-        val hits = elasticsearchTemplate.searchOne(
-            searchQuery,
-            StreetEntity::class.java,
-            STREET_INDEX
-        )
-        val stop = Instant.now()
+        val (hits, duration) = measureTimedValue {
+            elasticsearchTemplate.searchOne(
+                searchQuery,
+                StreetEntity::class.java,
+                STREET_INDEX
+            )
+        }
 
-        log.info("Search time: ${Duration.between(start, stop).toMillis()} ms")
+        log.info("Search time: ${duration.inMilliseconds} ms")
 
         val entity = hits?.content
         val street = Street(
@@ -47,7 +51,7 @@ class ElasticClient(
             country = entity?.country ?: "",
         )
 
-        return Pair(street, hits?.score ?: 0.0f)
+        return SearchHit(street, hits?.score ?: 0.0f)
     }
 
     fun buildQueryFrom(input: ClassifiedInput): NativeSearchQuery {
