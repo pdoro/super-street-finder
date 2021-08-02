@@ -5,4 +5,5 @@ import me.pablo.streetfinder.domain.core.Street
 
 interface StreetSearcherPort {
     fun search(input: String): SearchResponse<Street>
+    fun search(input: Collection<String>): Collection<SearchResponse<Street>>
 }

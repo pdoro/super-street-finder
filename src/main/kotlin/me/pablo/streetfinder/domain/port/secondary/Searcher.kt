@@ -5,4 +5,5 @@ import me.pablo.streetfinder.domain.core.SearchHit
 
 interface Searcher {
     fun search(input: ClassifiedInput): SearchHit
+    fun bulkSearch(inputs: Collection<ClassifiedInput>): Collection<SearchHit>
 }

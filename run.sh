@@ -11,5 +11,5 @@ sleep 15
 curl --location --request GET 'http://localhost:8080/search' \
 --header 'Content-Type: application/json' \
 --data-raw '{
-    "input": "Calle de Pugcerd"
-}   '
+    "input": "C/ d Pugcerd"
+}'

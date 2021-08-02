@@ -8,7 +8,7 @@ class ApiSearch {
     data class Response(
         val street: Street,
         val rawInput: String,
-        val searchDuration: Long,
+        val searchDurationMillis: Long,
         val accuracy: Double = 0.0,
         val score: Float
     ) {

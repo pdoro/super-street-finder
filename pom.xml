@@ -16,6 +16,11 @@
 	<properties>
 		<java.version>11</java.version>
 		<kotlin.version>1.4.30</kotlin.version>
+		<lucene-core.version>8.6.3</lucene-core.version>
+		<stanford-corenlp.version>4.2.0</stanford-corenlp.version>
+		<poi.version>5.0.0</poi.version>
+		<log4j-slf4j.version>2.14.0</log4j-slf4j.version>
+		<spring-websocket.version>5.3.9</spring-websocket.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -26,7 +31,7 @@
 		<dependency>
 			<groupId>org.apache.lucene</groupId>
 			<artifactId>lucene-core</artifactId>
-			<version>8.6.3</version>
+			<version>${lucene-core.version}</version>
 		</dependency>
 
 		<dependency>
@@ -59,37 +64,42 @@
 		<dependency>
 			<groupId>edu.stanford.nlp</groupId>
 			<artifactId>stanford-corenlp</artifactId>
-			<version>4.2.0</version>
+			<version>${stanford-corenlp.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi</artifactId>
-			<version>5.0.0</version>
+			<version>${poi.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-slf4j-impl</artifactId>
-			<version>2.14.0</version>
+			<version>${log4j-slf4j.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-api</artifactId>
-			<version>2.14.0</version>
+			<version>${log4j-slf4j.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-core</artifactId>
-			<version>2.14.0</version>
+			<version>${log4j-slf4j.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-ooxml</artifactId>
-			<version>5.0.0</version>
+			<version>${poi.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-websocket</artifactId>
+			<version>${spring-websocket.version}</version>
 		</dependency>
 
 	</dependencies>

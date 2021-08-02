@@ -7,7 +7,10 @@ import me.pablo.streetfinder.domain.core.Street
 import me.pablo.streetfinder.domain.core.StreetField
 import me.pablo.streetfinder.domain.port.secondary.Searcher
 import me.pablo.streetfinder.infrastructure.secundary.search.model.StreetEntity
+import org.elasticsearch.index.query.QueryBuilder
 import org.elasticsearch.index.query.QueryBuilders.*
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
 import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate
 import org.springframework.data.elasticsearch.core.mapping.IndexCoordinates
 import org.springframework.data.elasticsearch.core.query.NativeSearchQuery
@@ -54,28 +57,64 @@ class ElasticClient(
         return SearchHit(street, hits?.score ?: 0.0f)
     }
 
+    @OptIn(ExperimentalTime::class)
+    override fun bulkSearch(inputs: Collection<ClassifiedInput>): Collection<SearchHit> {
+
+        val searchQueries = inputs.map { buildQueryFrom(it) }
+
+        val (hits, duration) = measureTimedValue {
+            elasticsearchTemplate.multiSearch(
+                searchQueries,
+                StreetEntity::class.java,
+                STREET_INDEX
+            )
+        }
+
+        log.info("Search time: ${duration.inMilliseconds} ms")
+
+        return hits.map { it.searchHits[0] }
+            .map {
+                SearchHit(
+                    Street(
+                        type = it.content.type,
+                        nexus = it.content.nexus,
+                        name = it.content.name,
+                        postalCode = it.content.postalCode,
+                        number = it.content.number,
+                        country = it.content.country,
+                    ),
+                    score = it.score
+                )
+            }
+    }
+
     fun buildQueryFrom(input: ClassifiedInput): NativeSearchQuery {
 
         val query = boolQuery()
 
-        input.get(StreetField.TYPE) .takeIf { it.isNotBlank() }?.let {
+        input.ifContains(StreetField.TYPE) {
             query.should(matchQuery(StreetField.TYPE, it).boost(0.90f))
         }
-        input.get(StreetField.NAME).takeIf { it.isNotBlank() }?.let {
+        input.ifContains(StreetField.NAME) {
             query.should(matchQuery(StreetField.NAME, it).boost(2.0f))
         }
-        input.get(StreetField.NEXUS).takeIf { it.isNotBlank() }?.let {
+        input.ifContains(StreetField.NEXUS) {
             query.should(matchQuery(StreetField.NEXUS, it).boost(0.15f))
         }
-        input.get(StreetField.POSTAL_CODE).takeIf { it.isNotBlank() }?.let {
+        input.ifContains(StreetField.POSTAL_CODE) {
             query.should(matchQuery(StreetField.POSTAL_CODE, it))
         }
-        input.get(StreetField.COUNTRY).takeIf { it.isNotBlank() }?.let {
+        input.ifContains(StreetField.COUNTRY) {
             query.should(matchQuery(StreetField.COUNTRY, it))
         }
 
         return NativeSearchQueryBuilder()
             .withQuery(query)
+            .withPageable(PageRequest.of(0, 1))
             .build()
+    }
+
+    fun ClassifiedInput.ifContains(field: String, query: (String) -> Unit) {
+        this.get(field) .takeIf { it.isNotBlank() }?.let { query.invoke(it) }
     }
 }

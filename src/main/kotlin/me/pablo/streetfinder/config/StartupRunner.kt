@@ -1,7 +1,6 @@
 package me.pablo.streetfinder.config
 
 import logger
-import me.pablo.streetfinder.Application
 import me.pablo.streetfinder.infrastructure.secundary.ner.NERTrainer
 import me.pablo.streetfinder.infrastructure.secundary.search.model.StreetEntity
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
