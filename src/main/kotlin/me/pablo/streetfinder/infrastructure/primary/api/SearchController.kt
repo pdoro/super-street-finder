@@ -2,9 +2,10 @@ package me.pablo.streetfinder.infrastructure.primary.api
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import me.pablo.streetfinder.domain.port.primary.StreetSearcherPort
+import me.pablo.streetfinder.infrastructure.primary.api.mapper.ApiSearchMapper
 import me.pablo.streetfinder.infrastructure.primary.api.mapper.StreetMapper
 import me.pablo.streetfinder.infrastructure.primary.api.model.ApiSearch
-import org.springframework.boot.configurationprocessor.json.JSONObject
+import me.pablo.streetfinder.infrastructure.primary.api.model.Batch
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
@@ -22,41 +23,32 @@ class SearchController(
 
     @GetMapping("/search")
     fun search(
-        @RequestBody request: ApiSearch.Request
+        @RequestBody searchRequest: ApiSearch.Request
     ): ApiSearch.Response {
 
-        val start = Instant.now()
-        val searchResult = streetSearcher.search(request.input)
-        val stop = Instant.now()
-
-        return ApiSearch.Response(
-            rawInput = request.input,
-            searchDurationMillis = Duration.between(start, stop).toMillis(),
-            street = StreetMapper.map(searchResult.data),
-            accuracy = searchResult.classificationAccuracy,
-            score = searchResult.searchScore
-        )
+        val searchResult = streetSearcher.search(searchRequest.input)
+        return ApiSearchMapper.toResponse(searchRequest, searchResult)
     }
 
     @GetMapping("/search/bulk")
     fun search(
-        @RequestBody bulkRequest: List<ApiSearch.Request>
-    ): List<ApiSearch.Response> {
+        @RequestBody bulkRequest: Batch.Request<ApiSearch.Request>
+    ): Batch.Response<ApiSearch.Response> {
 
-        val start = Instant.now()
-        val searchResults = streetSearcher.search(bulkRequest.map { it.input })
-        val stop = Instant.now()
+        val searchResults = streetSearcher.search(bulkRequest.list.map { it.input })
 
-        return bulkRequest.zip(searchResults)
-            .map { (request, searchResult) ->
-                ApiSearch.Response(
-                    rawInput = request.input,
-                    searchDurationMillis = Duration.between(start, stop).toMillis(),
-                    street = StreetMapper.map(searchResult.data),
-                    accuracy = searchResult.classificationAccuracy,
-                    score = searchResult.searchScore
-            )
-        }
+        val responseList = bulkRequest.list.zip(searchResults)
+            .map { (searchRequest, searchResult) -> ApiSearchMapper.toResponse(searchRequest, searchResult) }
+
+        val totalDuration = responseList.map { it.searchDurationMillis }.average().toLong()
+
+        return Batch.Response(
+            size = responseList.size,
+            totalSearchDurationMillis = totalDuration,
+            avgSearchDurationMillis = totalDuration / responseList.size.toDouble(),
+            avgAccuracy = responseList.map { it.accuracy }.average(),
+            list = responseList
+        )
     }
 
     override fun handleTextMessage(session: WebSocketSession, message: TextMessage) {

@@ -21,6 +21,7 @@
 		<poi.version>5.0.0</poi.version>
 		<log4j-slf4j.version>2.14.0</log4j-slf4j.version>
 		<spring-websocket.version>5.3.9</spring-websocket.version>
+		<ahocorasick.version>0.6.3</ahocorasick.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -65,6 +66,12 @@
 			<groupId>edu.stanford.nlp</groupId>
 			<artifactId>stanford-corenlp</artifactId>
 			<version>${stanford-corenlp.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.ahocorasick</groupId>
+			<artifactId>ahocorasick</artifactId>
+			<version>${ahocorasick.version}</version>
 		</dependency>
 
 		<dependency>

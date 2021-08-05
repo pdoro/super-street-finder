@@ -34,7 +34,7 @@ class NERClassifier(
 
         classification.flatten()
             .forEach {
-                log.info("${it.originalText()} - ${it.label()} - prob: ${it.probability()}")
+                log.trace("${it.originalText()} - ${it.label()} - prob: ${it.probability()}")
             }
 
         return ClassifiedInput(classification.flatten())

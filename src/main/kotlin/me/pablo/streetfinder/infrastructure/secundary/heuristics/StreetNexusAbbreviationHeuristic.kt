@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component
 @Component
 class StreetNexusAbbreviationHeuristic: KeywordReplacementHeuristic(
     replacements = mapOf(
-        " d "  to " de ",
-        " dl " to " del ",
+        "d"  to "de",
+        "dl" to "del",
     )
 )

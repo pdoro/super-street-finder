@@ -13,7 +13,9 @@ class PreProcessorConfig {
 
     @Bean
     @Primary
-    fun preProcessorChain(preprocessors: List<PreProcessor>) = PreProcessorChain(preprocessors)
+    fun preProcessorChain(preprocessors: List<PreProcessor>): PreProcessor {
+        return PreProcessorChain(preprocessors.sortedBy { it.order() })
+    }
 
     class PreProcessorChain(private val preprocessors: List<PreProcessor>): PreProcessor {
 

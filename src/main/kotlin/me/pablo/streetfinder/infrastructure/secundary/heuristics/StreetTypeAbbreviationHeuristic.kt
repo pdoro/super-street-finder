@@ -13,6 +13,8 @@ class StreetTypeAbbreviationHeuristic: KeywordReplacementHeuristic(
         "Ctra"   to "Carretera",
         "Carret" to "Carretera",
         "Gta"    to "Glorieta",
-        "Pso"    to "Paseo"
+        "Pso"    to "Paseo",
+        "Kale"   to "Calle",
+        "Kle"    to "Calle"
     )
 )

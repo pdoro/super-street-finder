@@ -7,4 +7,6 @@ import org.springframework.stereotype.Component
 @Component
 class ExtraBlankSpaceHeuristic: PreProcessor {
     override fun process(value: String): String = StringUtils.normalizeSpace(value)
+
+    override fun order() = 0
 }
